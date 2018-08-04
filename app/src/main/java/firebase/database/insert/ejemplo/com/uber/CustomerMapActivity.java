@@ -128,8 +128,8 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                     }
 
                     if(driverFoundID != null) {
-                        DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverFoundID);
-                        driverRef.setValue(true);
+                        DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverFoundID).child("customerRequest");
+                        driverRef.removeValue();
                         driverFoundID = null;
                     }
 
@@ -149,6 +149,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                         mDriverMarker.remove();
                     }
                     mRequest.setText("Call Uber");
+
                     mDriverInfo.setVisibility(View.GONE);
                     mDriverName.setText("");
                     mDriverPhone.setText("");
@@ -230,6 +231,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                     driverRef.updateChildren(map);
 
                     getDriverLocation();
+                    getDriverInfo();
                     mRequest.setText("Looking for driver location...");
 
                 }
@@ -274,7 +276,6 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                     double locationLat = 0;
                     double locationLng = 0;
                     mRequest.setText("Driver found!");
-                    getAssignedDriverInfo();
 
                     if(map.get(0) != null) {
                         locationLat = Double.parseDouble(map.get(0).toString());
@@ -379,7 +380,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
             */
     }
 
-    private void getAssignedDriverInfo() {
+    private void getDriverInfo() {
         mDriverInfo.setVisibility(View.VISIBLE);
         DatabaseReference mCustomerDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverFoundID);
         mCustomerDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -389,15 +390,15 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                     Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
 
                     if(map.get("name") != null) {
-                        mDriverName.setText(map.get("driverName").toString());
+                        mDriverName.setText(map.get("name").toString());
                     }
 
                     if(map.get("phone") != null) {
-                        mDriverPhone.setText(map.get("driverPhone").toString());
+                        mDriverPhone.setText(map.get("phone").toString());
                     }
 
                     if(map.get("car") != null) {
-                        mDriverCar.setText(map.get("driverCar").toString());
+                        mDriverCar.setText(map.get("car").toString());
                     }
 
                     if(map.get("profileImageUrl") != null) {

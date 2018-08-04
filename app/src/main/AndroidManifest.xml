@@ -34,16 +34,16 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDzL2osQYAhi8x_DGNJ3PG1G2L015KUMX0"
-             />
+            android:value="AIzaSyDzL2osQYAhi8x_DGNJ3PG1G2L015KUMX0" />
 
-        <!--android:value="AIzaSyDzL2osQYAhi8x_DGNJ3PG1G2L015KUMX0" @string/google_maps_key -->
+        <!-- android:value="AIzaSyDzL2osQYAhi8x_DGNJ3PG1G2L015KUMX0" @string/google_maps_key -->
 
         <activity
             android:name=".DriverMapActivity"
             android:label="@string/title_activity_driver_map" />
         <activity android:name=".CustomerMapActivity" />
-        <activity android:name=".CustomerSettingsActivity"></activity>
+        <activity android:name=".CustomerSettingsActivity" />
+        <activity android:name=".DriverSettingsActivity"></activity>
     </application>
 
 </manifest>
