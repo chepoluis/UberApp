@@ -117,8 +117,15 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
             public void onClick(View v) {
                 if(requestBol) {
                     requestBol = false;
-                    geoQuery.removeAllListeners();
-                    driverLocationRef.removeEventListener(driverLocationRefListener);
+
+                    // The problem when pressed the main button twice is fixed
+                    if(geoQuery != null) {
+                        geoQuery.removeAllListeners();
+                    }
+
+                    if(driverLocationRefListener!= null) {
+                        driverLocationRef.removeEventListener(driverLocationRefListener);
+                    }
 
                     if(driverFoundID != null) {
                         DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverFoundID);
@@ -414,7 +421,6 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
     }
 
-
     @Override
     protected void onStop() {
         super.onStop();
@@ -438,3 +444,5 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
         }
     }
 }
+
+
