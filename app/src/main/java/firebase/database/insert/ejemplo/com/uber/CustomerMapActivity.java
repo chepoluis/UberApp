@@ -74,6 +74,8 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
 
     private String destination, requestService;
 
+    private LatLng destinationLatLng;
+
     private RadioGroup mRadioGroup;
 
 
@@ -92,6 +94,8 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
         } else {
             mapFragment.getMapAsync(this);
         }
+
+        destinationLatLng = new LatLng(0.0, 0.0);
 
         mRadioGroup = (RadioGroup) findViewById(R.id.radioGroup);
         mRadioGroup.check(R.id.UberX);
@@ -124,45 +128,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
             @Override
             public void onClick(View v) {
                 if(requestBol) {
-                    requestBol = false;
-
-                    // The problem when pressed the main button twice is fixed
-                    if(geoQuery != null) {
-                        geoQuery.removeAllListeners();
-                    }
-
-                    if(driverLocationRefListener!= null) {
-                        driverLocationRef.removeEventListener(driverLocationRefListener);
-                    }
-
-                    if(driverFoundID != null) {
-                        DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverFoundID).child("customerRequest");
-                        driverRef.removeValue();
-                        driverFoundID = null;
-                    }
-
-                    radius = 1;
-                    driverFound = false;
-                    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("customerRequest");
-                    GeoFire geoFire = new GeoFire(ref);
-                    geoFire.removeLocation(userId);
-
-                    // Remove the markers
-                    if(pickupMarker != null) {
-                        pickupMarker.remove();
-                    }
-                    if(mDriverMarker != null) {
-                        mDriverMarker.remove();
-                    }
-                    mRequest.setText("Call Uber");
-
-                    mDriverInfo.setVisibility(View.GONE);
-                    mDriverName.setText("");
-                    mDriverPhone.setText("");
-                    mDriverCar.setText("");
-                    mDriverProfileImage.setImageResource(R.mipmap.ic_default_user);
+                    endRide();
                 } else {
                     int selectId = mRadioGroup.getCheckedRadioButtonId();
 
@@ -210,6 +176,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
             public void onPlaceSelected(Place place) {
                 // TODO: Get info about the selected place.
                 destination = place.getName().toString();
+                destinationLatLng = place.getLatLng();
             }
             @Override
             public void onError(Status status) {
@@ -258,10 +225,13 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                                     HashMap map = new HashMap();
                                     map.put("customerRideId", customerId);
                                     map.put("destination", destination);
+                                    map.put("destinationLat", destinationLatLng.latitude);
+                                    map.put("destinationLng", destinationLatLng.longitude);
                                     driverRef.updateChildren(map);
 
                                     getDriverLocation();
                                     getDriverInfo();
+                                    getHasRideEnded();
                                     mRequest.setText("Looking for driver location...");
                                 }
                             }
@@ -449,6 +419,73 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
 
             }
         });
+    }
+
+    private DatabaseReference driveHasEndedRef;
+    private ValueEventListener driveHasEndedRefListener;
+    private void getHasRideEnded() {
+        driveHasEndedRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverFoundID).child("customerRequest").child("customerRideId");
+        driveHasEndedRefListener = driveHasEndedRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+
+                } else {
+                    endRide();
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+    }
+
+    private void endRide() {
+        // The customer cancel de ride
+
+        requestBol = false;
+
+        // The problem when pressed the main button twice is fixed
+        if(geoQuery != null) {
+            geoQuery.removeAllListeners();
+        }
+
+        if(driverLocationRefListener!= null) {
+            driverLocationRef.removeEventListener(driverLocationRefListener);
+        }
+
+        //if(driveHasEndedRefListener != null){
+            driveHasEndedRef.removeEventListener(driveHasEndedRefListener);
+        //}
+
+        if(driverFoundID != null) {
+            DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverFoundID).child("customerRequest");
+            driverRef.removeValue();
+            driverFoundID = null;
+        }
+
+        radius = 1;
+        driverFound = false;
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("customerRequest");
+        GeoFire geoFire = new GeoFire(ref);
+        geoFire.removeLocation(userId);
+
+        // Remove the markers
+        if(pickupMarker != null) {
+            pickupMarker.remove();
+        }
+        if(mDriverMarker != null) {
+            mDriverMarker.remove();
+        }
+        mRequest.setText("Call Uber");
+
+        mDriverInfo.setVisibility(View.GONE);
+        mDriverName.setText("");
+        mDriverPhone.setText("");
+        mDriverCar.setText("");
+        mDriverProfileImage.setImageResource(R.mipmap.ic_default_user);
     }
 
     @Override
