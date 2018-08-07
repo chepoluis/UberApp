@@ -38,6 +38,6 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolders>{
     // This method provides the numbers of objects in the CardView
     @Override
     public int getItemCount() {
-        return 101;
+        return this.itemList.size();
     }
 }
