@@ -9,12 +9,14 @@ import firebase.database.insert.ejemplo.com.uber.R;
 public class HistoryViewHolders extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     public TextView rideId;
+    public TextView time;
 
     public HistoryViewHolders(View itemView) {
         super(itemView);
         itemView.setOnClickListener(this);
 
         rideId = (TextView) itemView.findViewById(R.id.rideId);
+        time = (TextView) itemView.findViewById(R.id.time);
     }
 
     @Override

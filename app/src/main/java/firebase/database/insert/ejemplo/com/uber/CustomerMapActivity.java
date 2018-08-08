@@ -465,9 +465,9 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
             driverLocationRef.removeEventListener(driverLocationRefListener);
         }
 
-        //if(driveHasEndedRefListener != null){
+        if(driveHasEndedRefListener != null){
             driveHasEndedRef.removeEventListener(driveHasEndedRefListener);
-        //}
+        }
 
         if(driverFoundID != null) {
             DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverFoundID).child("customerRequest");
