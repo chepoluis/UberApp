@@ -62,7 +62,7 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
 
     private String customerId = "", destination;
 
-    private LatLng destinationLatLng;
+    private LatLng pickupLatLng;
 
     private Boolean isLogginOut = false;
 
@@ -109,8 +109,8 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
                         status = 2;
                         erasePolylines();
 
-                        if(destinationLatLng.latitude != 0.0 && destinationLatLng.longitude != 0.0) {
-                            getRouteToMarker(destinationLatLng);
+                        if(pickupLatLng.latitude != 0.0 && pickupLatLng.longitude != 0.0) {
+                            getRouteToMarker(pickupLatLng);
                         }
 
                         mRideStatus.setText("Drive completed");
@@ -241,7 +241,7 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
 
                     if(map.get("destinationLng") != null) {
                         destinationLng = Double.valueOf(map.get("destinationLng").toString());
-                        destinationLatLng = new LatLng(destinationLat, destinationLng);
+                        pickupLatLng = new LatLng(destinationLat, destinationLng);
                     }
                 }
             }
@@ -322,6 +322,11 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
         map.put("customer", customerId);
         map.put("rating", 0);
         map.put("timestamp", getCurrentTimestamp());
+        map.put("destination", destination);
+        map.put("destination/from/lat", pickupLatLng.latitude);
+        map.put("destination/from/lng", pickupLatLng.longitude);
+        map.put("destination/to/lat", pickupLatLng.latitude);
+        map.put("destination/to/lng", pickupLatLng.longitude);
         historyRef.child(requestId).updateChildren(map);
     }
 

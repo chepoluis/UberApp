@@ -36,7 +36,10 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDzL2osQYAhi8x_DGNJ3PG1G2L015KUMX0" />
 
-        <!-- android:value="AIzaSyDzL2osQYAhi8x_DGNJ3PG1G2L015KUMX0" @string/google_maps_key -->
+        <!-- android:value="AIzaSyDzL2osQYAhi8x_DGNJ3PG1G2L015KUMX0" @string/google_maps_key
+
+        // AIzaSyD5_Fh3tc-lrBrOYIYbdMMAWMqr5uVaPg4
+        -->
 
         <activity
             android:name=".DriverMapActivity"
