@@ -62,7 +62,7 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
 
     private String customerId = "", destination;
 
-    private LatLng pickupLatLng;
+    private LatLng destinationLatLng, pickupLatLng;
 
     private Boolean isLogginOut = false;
 
@@ -109,8 +109,8 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
                         status = 2;
                         erasePolylines();
 
-                        if(pickupLatLng.latitude != 0.0 && pickupLatLng.longitude != 0.0) {
-                            getRouteToMarker(pickupLatLng);
+                        if(destinationLatLng.latitude != 0.0 && destinationLatLng.longitude != 0.0) {
+                            getRouteToMarker(destinationLatLng);
                         }
 
                         mRideStatus.setText("Drive completed");
@@ -195,7 +195,7 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
                         locationLng = Double.parseDouble(map.get(1).toString());
                     }
 
-                    LatLng pickupLatLng = new LatLng(locationLat, locationLng);
+                    pickupLatLng = new LatLng(locationLat, locationLng);
                     pickupMarker = mMap.addMarker(new MarkerOptions().position(pickupLatLng).title("Pickup location").icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_pickup)));
                     // Draw route
                     getRouteToMarker(pickupLatLng);
@@ -241,7 +241,7 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
 
                     if(map.get("destinationLng") != null) {
                         destinationLng = Double.valueOf(map.get("destinationLng").toString());
-                        pickupLatLng = new LatLng(destinationLat, destinationLng);
+                        destinationLatLng = new LatLng(destinationLat, destinationLng);
                     }
                 }
             }
@@ -323,10 +323,10 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
         map.put("rating", 0);
         map.put("timestamp", getCurrentTimestamp());
         map.put("destination", destination);
-        map.put("destination/from/lat", pickupLatLng.latitude);
-        map.put("destination/from/lng", pickupLatLng.longitude);
-        map.put("destination/to/lat", pickupLatLng.latitude);
-        map.put("destination/to/lng", pickupLatLng.longitude);
+        map.put("location/from/lat", pickupLatLng.latitude);
+        map.put("location/from/lng", pickupLatLng.longitude);
+        map.put("location/to/lat", destinationLatLng.latitude);
+        map.put("location/to/lng", destinationLatLng.longitude);
         historyRef.child(requestId).updateChildren(map);
     }
 
