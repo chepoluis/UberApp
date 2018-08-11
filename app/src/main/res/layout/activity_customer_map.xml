@@ -63,20 +63,20 @@
         android:layout_gravity="bottom">
 
         <LinearLayout
+            android:id="@+id/driverInfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/driverInfo"
             android:layout_gravity="bottom"
-            android:orientation="horizontal"
             android:background="@android:color/white"
-            android:visibility="gone" >
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <ImageView
+                android:id="@+id/driverProfileImage"
                 android:layout_width="100sp"
                 android:layout_height="100sp"
-                android:id="@+id/driverProfileImage"
-                android:src="@mipmap/ic_default_user"
-                android:padding="20sp"/>
+                android:padding="20sp"
+                android:src="@mipmap/ic_default_user" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -85,33 +85,36 @@
                 android:paddingLeft="10sp">
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:id="@+id/driverName"
-                    android:text="Driver's name"
-                    android:paddingBottom="10sp"
-                    android:paddingTop="20sp" />
-                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingBottom="10sp"
+                    android:paddingTop="20sp"
+                    android:text="Driver's name" />
+
+                <TextView
                     android:id="@+id/driverPhone"
-                    android:text="Driver's phone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:paddingBottom="10sp"
-                    android:paddingTop="20sp" />
+                    android:paddingTop="20sp"
+                    android:text="Driver's phone" />
+
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:id="@+id/driverCar"
-                    android:text="Driver's car"
-                    android:paddingBottom="10sp"
-                    android:paddingTop="20sp" />
-                <RatingBar
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingBottom="10sp"
+                    android:paddingTop="20sp"
+                    android:text="Driver's car" />
+
+                <RatingBar
                     android:id="@+id/ratingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:numStars="5"
-                    android:stepSize="0.1"/>
+                    android:stepSize="0.1" />
 
             </LinearLayout>
 
