@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, DriverLoginActivity.class);
                 startActivity(intent);
-                finish();
+                // finish();
                 return;
             }
         });
@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, CustomerLoginActivity.class);
                 startActivity(intent);
-                finish();
+                // finish();
                 return;
             }
         });

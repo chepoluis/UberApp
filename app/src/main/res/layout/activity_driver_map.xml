@@ -34,12 +34,14 @@
                 android:layout_height="wrap_content"
                 android:text="Settings"/>
         </LinearLayout>
+        <!--
         <Switch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Working"
             android:layout_margin="10sp"
-            android:id="@+id/workingSwitch"/>
+            android:id="@+id/workingSwitch" />
+            -->
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
