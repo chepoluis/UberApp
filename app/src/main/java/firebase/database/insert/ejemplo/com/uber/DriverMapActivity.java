@@ -68,6 +68,8 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
 
     private LatLng destinationLatLng, pickupLatLng;
 
+    private float rideDistance;
+
     private Boolean isLogginOut = false;
 
     private SupportMapFragment mapFragment;
@@ -311,6 +313,7 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
         GeoFire geoFire = new GeoFire(ref);
         geoFire.removeLocation(customerId);
         customerId = "";
+        rideDistance = 0;
 
         // Remove the markers
         if(pickupMarker != null) {
@@ -345,6 +348,7 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
         map.put("location/from/lng", pickupLatLng.longitude);
         map.put("location/to/lat", destinationLatLng.latitude);
         map.put("location/to/lng", destinationLatLng.longitude);
+        map.put("distance", rideDistance);
         historyRef.child(requestId).updateChildren(map);
     }
 
@@ -378,6 +382,10 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
     @Override
     public void onLocationChanged(Location location) {
         if(getApplicationContext() != null) {
+
+            if(!customerId.equals("")) {
+                rideDistance += mLastLocation.distanceTo(location)/1000;
+            }
 
             mLastLocation = location;
             LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());

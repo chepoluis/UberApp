@@ -1,5 +1,6 @@
 package firebase.database.insert.ejemplo.com.uber;
 
+import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -57,6 +58,8 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
     private DatabaseReference historyRideInfoDb;
 
     private LatLng destinationLatLng, pickupLatLng;
+    private String distance;
+    private Double ridePrice;
 
     private GoogleMap mMap;
     private SupportMapFragment mMapFragment;
@@ -92,6 +95,7 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
 
     private void getRideInformation() {
         historyRideInfoDb.addListenerForSingleValueEvent(new ValueEventListener() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()) {
@@ -120,6 +124,12 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
 
                         if(child.getKey().equals("rating")) {
                             mRatinBar.setRating(Integer.valueOf(child.getValue().toString()));
+                        }
+
+                        if(child.getKey().equals("distance")) {
+                            distance = child.getValue().toString();
+                            rideDistance.setText(distance.substring(0, Math.min(distance.length(), 6)) + " km");
+                            ridePrice = Double.valueOf(distance) * 0.5;
                         }
 
                         if(child.getKey().equals("destination")) {
