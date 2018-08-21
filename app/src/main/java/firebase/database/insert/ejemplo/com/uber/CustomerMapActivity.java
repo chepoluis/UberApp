@@ -79,7 +79,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
 
     private RadioGroup mRadioGroup;
 
-    private RatingBar mRatinBar;
+    private RatingBar mRatingBar;
 
     private PlaceAutocompleteFragment placeAutocompleteFragment;
 
@@ -100,7 +100,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
         destinationLatLng = new LatLng(0.0, 0.0);
 
         mRadioGroup = (RadioGroup) findViewById(R.id.radioGroup);
-        mRadioGroup.check(R.id.UberX);
+        mRadioGroup.check(R.id.Taxi);
 
         mLogout = (Button) findViewById(R.id.logout);
         mRequest = (Button) findViewById(R.id.request);
@@ -115,7 +115,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
         mDriverPhone = (TextView) findViewById(R.id.driverPhone);
         mDriverCar = (TextView) findViewById(R.id.driverCar);
 
-        mRatinBar = (RatingBar) findViewById(R.id.ratingBar);
+        mRatingBar = (RatingBar) findViewById(R.id.ratingBar);
 
         // Log out
         mLogout.setOnClickListener(new View.OnClickListener() {
@@ -436,7 +436,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                     }
                     if(ratingsTotal != 0) {
                         ratingAverage = ratingSum/ratingsTotal;
-                        mRatinBar.setRating(ratingAverage);
+                        mRatingBar.setRating(ratingAverage);
                     }
                 }
             }
@@ -459,6 +459,8 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
 
                 } else {
                     endRide();
+                    //Intent endRide = new Intent(CustomerMapActivity.this, HistorySingleActivity.class);
+                    //startActivity(endRide);
                 }
             }
             @Override
@@ -506,7 +508,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
         if(mDriverMarker != null) {
             mDriverMarker.remove();
         }
-        mRequest.setText("Call Uber");
+        mRequest.setText("Call Taxi");
 
         mDriverInfo.setVisibility(View.GONE);
         mDriverName.setText("");

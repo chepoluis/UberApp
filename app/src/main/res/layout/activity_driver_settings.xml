@@ -50,20 +50,20 @@
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="UberX"
-            android:id="@+id/UberX"/>
+            android:text="Taxi"
+            android:id="@+id/Taxi"/>
 
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="UberBlack"
-            android:id="@+id/UberBlack"/>
+            android:text="ExecutiveTaxi"
+            android:id="@+id/ExecutiveTaxi"/>
 
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="UberXL"
-            android:id="@+id/UberXL"/>
+            android:text="PickupTaxi"
+            android:id="@+id/PickupTaxi"/>
 
     </RadioGroup>
 
