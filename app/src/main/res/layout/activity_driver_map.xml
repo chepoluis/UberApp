@@ -27,6 +27,13 @@
                 android:text="Logout"/>
 
             <Button
+                android:id="@+id/history"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="History" />
+
+            <Button
                 android:layout_weight="1"
                 android:layout_gravity="end"
                 android:id="@+id/settings"

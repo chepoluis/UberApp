@@ -192,28 +192,28 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
                 historyRideInfoDb.child("rating").setValue(rating);
                 DatabaseReference mDriveRatingDb = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverId).child("rating");
-                mDriveRatingDb.child(rideId).setValue(rating);
-            }
-        });
+        mDriveRatingDb.child(rideId).setValue(rating);
+    }
+});
 
         if(customerPaid) {
-            mPay.setEnabled(false);
+        mPay.setEnabled(false);
         } else {
-            mPay.setEnabled(true);
+        mPay.setEnabled(true);
         }
 
         mPay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                payPalPayment();
-            }
+@Override
+public void onClick(View view) {
+        payPalPayment();
+        }
         });
-    }
-    private int PAYPAL_REQUEST_CODE = 1;
-    private static PayPalConfiguration config = new PayPalConfiguration()
-            .environment(PayPalConfiguration.ENVIRONMENT_SANDBOX)
-            .clientId(PayPalConfig.PAYPAL_CLIENT_ID);
-    private void payPalPayment() {
+        }
+private int PAYPAL_REQUEST_CODE = 1;
+private static PayPalConfiguration config = new PayPalConfiguration()
+        .environment(PayPalConfiguration.ENVIRONMENT_SANDBOX)
+        .clientId(PayPalConfig.PAYPAL_CLIENT_ID);
+private void payPalPayment() {
         PayPalPayment payment = new PayPalPayment(new BigDecimal(ridePrice), "MXN", "Taxi Ride",
                 PayPalPayment.PAYMENT_INTENT_SALE);
         Intent intent = new Intent(this, PaymentActivity.class);
