@@ -100,7 +100,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
         destinationLatLng = new LatLng(0.0, 0.0);
 
         mRadioGroup = (RadioGroup) findViewById(R.id.radioGroup);
-        mRadioGroup.check(R.id.Taxi);
+        mRadioGroup.check(R.id.StandardTaxi);
 
         mLogout = (Button) findViewById(R.id.logout);
         mRequest = (Button) findViewById(R.id.request);

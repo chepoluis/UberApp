@@ -41,6 +41,10 @@ import com.paypal.android.sdk.payments.PayPalConfiguration;
 import com.paypal.android.sdk.payments.PayPalPayment;
 import com.paypal.android.sdk.payments.PayPalService;
 import com.paypal.android.sdk.payments.PaymentActivity;
+import com.paypal.android.sdk.payments.PaymentConfirmation;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -55,13 +59,14 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
 
     private TextView rideLocation;
     private TextView rideDistance;
+    private TextView textRidePrice;
     private TextView rideDate;
     private TextView userName;
     private TextView userPhone;
 
     private ImageView userImage;
 
-    private RatingBar mRatinBar;
+    private RatingBar mRatingBar;
 
     private Button mPay;
 
@@ -70,6 +75,7 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
     private LatLng destinationLatLng, pickupLatLng;
     private String distance;
     private Double ridePrice;
+    private Boolean customerPaid = false;
 
     private GoogleMap mMap;
     private SupportMapFragment mMapFragment;
@@ -92,13 +98,14 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
 
         rideLocation = (TextView) findViewById(R.id.rideLocation);
         rideDistance = (TextView) findViewById(R.id.rideDistance);
+        textRidePrice = (TextView) findViewById(R.id.ridePrice);
         rideDate = (TextView) findViewById(R.id.rideDate);
         userName = (TextView) findViewById(R.id.userName);
         userPhone = (TextView) findViewById(R.id.userPhone);
 
         userImage = (ImageView) findViewById(R.id.userImage);
 
-        mRatinBar = (RatingBar) findViewById(R.id.ratingBar);
+        mRatingBar = (RatingBar) findViewById(R.id.ratingBar);
 
         mPay = findViewById(R.id.pay);
 
@@ -138,13 +145,19 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
                         }
 
                         if(child.getKey().equals("rating")) {
-                            mRatinBar.setRating(Integer.valueOf(child.getValue().toString()));
+                            mRatingBar.setRating(Integer.valueOf(child.getValue().toString()));
+                        }
+
+                        if(child.getKey().equals("customerPaid")) {
+                            customerPaid = true;
                         }
 
                         if(child.getKey().equals("distance")) {
                             distance = child.getValue().toString();
                             rideDistance.setText(distance.substring(0, Math.min(distance.length(), 6)) + " km");
-                            ridePrice = Double.valueOf(distance) * 0.5;
+                            ridePrice = Double.valueOf(distance) * 10;
+                            ridePrice = Math.round(ridePrice*100.0)/100.0;
+                            textRidePrice.setText("$ " + String.valueOf(ridePrice) + " MXN");
                         }
 
                         if(child.getKey().equals("destination")) {
@@ -172,9 +185,9 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
     }
 
     private void displayCustomerRelatedObjects() {
-        mRatinBar.setVisibility(View.VISIBLE);
+        mRatingBar.setVisibility(View.VISIBLE);
         mPay.setVisibility(View.VISIBLE);
-        mRatinBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+        mRatingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
                 historyRideInfoDb.child("rating").setValue(rating);
@@ -182,6 +195,12 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
                 mDriveRatingDb.child(rideId).setValue(rating);
             }
         });
+
+        if(customerPaid) {
+            mPay.setEnabled(false);
+        } else {
+            mPay.setEnabled(true);
+        }
 
         mPay.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -207,6 +226,22 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PAYPAL_REQUEST_CODE){
             if(resultCode == Activity.RESULT_OK){
+                PaymentConfirmation confirm = data.getParcelableExtra(PaymentActivity.EXTRA_RESULT_CONFIRMATION);
+                if(confirm != null) {
+                    try {
+                        JSONObject jsonObj = new JSONObject(confirm.toJSONObject().toString());
+
+                        String paymentResponse = jsonObj.getJSONObject("response").getString("state");
+
+                        if(paymentResponse.equals("approved")) {
+                            Toast.makeText(getApplicationContext(), "Payment successful", Toast.LENGTH_LONG).show();
+                            historyRideInfoDb.child("customerPaid").setValue(true);
+                            mPay.setEnabled(false);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
 
             }else{
                 Toast.makeText(getApplicationContext(), "Payment unsuccessful", Toast.LENGTH_LONG).show();

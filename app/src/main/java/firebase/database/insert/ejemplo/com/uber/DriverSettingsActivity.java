@@ -126,8 +126,8 @@ public class DriverSettingsActivity extends AppCompatActivity {
                     if(map.get("service") != null) {
                         mService = map.get("service").toString();
                         switch (mService) {
-                            case "Taxi":
-                                mRadioGroup.check(R.id.Taxi);
+                            case "StandardTaxi":
+                                mRadioGroup.check(R.id.StandardTaxi);
                                 break;
                             case "ExecutiveTaxi":
                                 mRadioGroup.check(R.id.ExecutiveTaxi);
