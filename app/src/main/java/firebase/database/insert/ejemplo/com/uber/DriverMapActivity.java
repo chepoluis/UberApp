@@ -238,13 +238,15 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
     }
 
     private void getRouteToMarker(LatLng pickupLatLng) {
-        Routing routing = new Routing.Builder()
-                .travelMode(AbstractRouting.TravelMode.DRIVING)
-                .withListener(this)
-                .alternativeRoutes(false)
-                .waypoints(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), pickupLatLng)
-                .build();
-        routing.execute();
+        if (pickupLatLng != null && mLastLocation != null) {
+            Routing routing = new Routing.Builder()
+                    .travelMode(AbstractRouting.TravelMode.DRIVING)
+                    .withListener(this)
+                    .alternativeRoutes(false)
+                    .waypoints(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), pickupLatLng)
+                    .build();
+            routing.execute();
+        }
     }
 
     private void getAssignedCustomerDestination() {

@@ -1,13 +1,17 @@
 package firebase.database.insert.ejemplo.com.uber;
 
+import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -46,6 +50,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +62,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
     Location mLastLocation;
     LocationRequest mLocationRequest;
 
-    private Button mLogout, mRequest, mSettings, mHistory;
+    private Button mLogout, mRequest, mSettings, mHistory, mEmergency;
 
     private LatLng pickupLocation;
 
@@ -83,6 +88,8 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
 
     private PlaceAutocompleteFragment placeAutocompleteFragment;
 
+    private static final String TAG = "MainActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,6 +113,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
         mRequest = (Button) findViewById(R.id.request);
         mSettings = (Button) findViewById(R.id.settings);
         mHistory = (Button) findViewById(R.id.history);
+        mEmergency = (Button) findViewById(R.id.emergency);
 
         mDriverInfo = (LinearLayout) findViewById(R.id.driverInfo);
 
@@ -196,6 +204,13 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
             @Override
             public void onError(Status status) {
                 // TODO: Handle the error.
+            }
+        });
+
+        mEmergency.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                customDialog("Emergency", "are you sure that you want to call 911?", "cancelMethod1", "okMethod1");
             }
         });
     }
@@ -402,6 +417,8 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
             */
     }
 
+
+
     private void getDriverInfo() {
         mDriverInfo.setVisibility(View.VISIBLE);
         DatabaseReference mCustomerDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverFoundID);
@@ -547,6 +564,106 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
             }
         }
     }
+
+    boolean getDriversAroundStarted = false;
+    List<Marker> markers = new ArrayList<Marker>();
+    private void getDriversAround(){
+        getDriversAroundStarted = true;
+
+        DatabaseReference driverLocation = FirebaseDatabase.getInstance().getReference().child("driversAvailable");
+        GeoFire geoFire = new GeoFire(driverLocation);
+        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(mLastLocation.getLongitude(), mLastLocation.getLatitude()), 10000);
+
+        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+            @Override
+            public void onKeyEntered(String key, GeoLocation location) {
+                for(Marker markerIt : markers){
+                    if(markerIt.getTag().equals(key))
+                        return;
+                }
+
+                LatLng driverLocation = new LatLng(location.latitude, location.longitude);
+
+                Marker mDriverMarker = mMap.addMarker(new MarkerOptions().position(driverLocation).title(key).icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car)));
+                mDriverMarker.setTag(key);
+                markers.add(mDriverMarker);
+            }
+            @Override
+            public void onKeyExited(String key) {
+                for(Marker markerIt : markers){
+                if(markerIt.getTag().equals(key)){
+                    markerIt.remove();
+                }
+            }
+        }
+        @Override
+        public void onKeyMoved(String key, GeoLocation location) {
+            for(Marker markerIt : markers){
+                if(markerIt.getTag().equals(key)){
+                    markerIt.setPosition(new LatLng(location.latitude, location.longitude));
+                }
+            }
+            }
+            @Override
+            public void onGeoQueryReady() {
+            }
+            @Override
+            public void onGeoQueryError(DatabaseError error) {
+            }
+        });
+    }
+
+    private void cancelMethod1(){
+        Log.d(TAG, "cancelMethod1: Called.");
+        toastMessage("Canceled call");
+    }
+
+    private void okMethod1(){
+        Log.d(TAG, "okMethod1: Called.");
+        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:3123104335"));
+        if(ActivityCompat.checkSelfPermission(CustomerMapActivity.this, Manifest.permission.CALL_PHONE)
+                != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(CustomerMapActivity.this, "For realize a call, please turn on the permissions", Toast.LENGTH_SHORT).show();
+            return;
+        }else{
+            startActivity(intent);
+        }
+        toastMessage("Calling");
+    }
+
+    public void customDialog(String title, String message, final String cancelMethod, final String okMethod){
+        final android.support.v7.app.AlertDialog.Builder builderSingle = new android.support.v7.app.AlertDialog.Builder(this);
+        //builderSingle.setIcon(R.mipmap.ic_notification);
+        builderSingle.setTitle(title);
+        builderSingle.setMessage(message);
+        builderSingle.setNegativeButton(
+                "Cancel",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.d(TAG, "onClick: Cancel Called.");
+                        if(cancelMethod.equals("cancelMethod1")){
+                            cancelMethod1();
+                        }
+                    }
+                });
+        builderSingle.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Log.d(TAG, "onClick: OK Called.");
+                if(okMethod.equals("okMethod1")){
+                    okMethod1();
+                }
+            }
+        });
+        builderSingle.show();
+    }
+
+    public void toastMessage(String message){
+        Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
+    }
 }
+
+
 
 
